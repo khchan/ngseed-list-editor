@@ -7,9 +7,17 @@ module.exports = function(config){
       'app/bower_components/angular/angular.js',
       'app/bower_components/angular-route/angular-route.js',
       'app/bower_components/angular-mocks/angular-mocks.js',
+      'node_modules/lodash/dist/lodash.js',
+      'app/bower_components/ng-table/ng-table.js',
       'app/js/**/*.js',
-      'test/unit/**/*.js'
+      'test/unit/**/*.js',
+      'app/partials/ListEditor.html'
     ],
+
+    // generate js files from html templates
+    preprocessors: {
+      'app/partials/ListEditor.html': 'ng-html2js'
+    },
 
     autoWatch : true,
 
@@ -21,7 +29,8 @@ module.exports = function(config){
             'karma-chrome-launcher',
             'karma-firefox-launcher',
             'karma-jasmine',
-            'karma-junit-reporter'
+            'karma-junit-reporter',
+            'karma-ng-html2js-preprocessor'
             ],
 
     junitReporter : {

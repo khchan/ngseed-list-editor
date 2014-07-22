@@ -1,170 +1,170 @@
 <div class="row">
-    <br/>
-    <div class="form-inline pull-right">
-        <div class="form-group">
-            <label>Sorting: {{tableParams.sorting()|json}}</label>
-        </div>
-        <div class="form-group">
-            <input type="text" placeholder="Search" class="form-control" ng-model="search.$">
-        </div>
-        <div class="form-group">
-            <button ng-click="tableParams.sorting({})" class="btn btn-default">Clear sorting</button>
-        </div>
-    </div>
+	<br/>
+	<div class="form-inline pull-right">
+		<div class="form-group">
+			<label>Sorting: {{tableParams.sorting()|json}}</label>
+		</div>
+		<div class="form-group">
+			<input type="text" placeholder="Search" class="form-control" ng-model="search.$">
+		</div>
+		<div class="form-group">
+			<button ng-click="tableParams.sorting({})" class="btn btn-default">Clear sorting</button>
+		</div>
+	</div>
 
-    <table ng-table="tableParams" class="table ng-table-rowselected">
-        <thead>
-            <tr>
-                <!-- Header Columns for Data -->
-                <th ng-repeat="column in columns" class="sortable text-center" 
-                    ng-mouseenter="showEditCol = true" ng-mouseleave="showEditCol = false"
-                    ng-class="{active: column.$edit && canEditItem,
-                        'sort-asc': isSortBy(column.field, 'asc'),
-                        'sort-desc': isSortBy(column.field, 'desc')}"
-                    ng-click="sortTable(column)">
-                    <div ng-if="showEditCol && !column.$edit && canEdit" 
-                         ng-hide="editCol || editRow || canEditItem" class="btn-group">
-                        <button class="btn btn-default btn-xs" ng-if="canEdit" ng-click="selectColumnEdit(column)">
-                            <span class="glyphicon glyphicon-pencil"></span>
-                        </button>
-                        <button class="btn btn-danger btn-xs" ng-if="canEdit" ng-click="removeColumn($index)">
-                            <span class="glyphicon glyphicon-remove"></span>
-                        </button>
-                    </div><br/>
-                    <span ng-if="!column.$edit">{{column.title}}</span>
-                    <div ng-if="column.$edit">
-                        <input type="text" class="form-control" ng-model="column.title" />
-                    </div>
-                </th>
-                <!-- Edit Column Header -->
-                <th ng-if="!editCol && canEdit" width="45">
-                    <button class="btn btn-default btn-sm" ng-if="!editCol" ng-disabled="editRow || canEditItem" ng-click="editNewColumn()">
-                      <span class="glyphicon glyphicon-plus"></span>
-                  </button>
-                </th>
-                <!-- Action Column Header -->
-                <th ng-if="editCol && canEdit" width="200">
-                    <input type="text" placeholder="New Column Title" class="form-control" ng-model="columnBuffer.title" />
-                </th>
-                <th ng-if="canEdit">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr ng-repeat="item in $data | filter:search:strict" ng-class="{active: item.$edit && canEditItem}">
-                <!-- Render each cell per row of data -->
-                <td class="text-center" ng-repeat="column in columns" 
-                    ng-class="{active: column.$edit && canEditItem}"
-                    filter="filterTable(column)">
-                    <span ng-if="!item.$edit && !column.$edit">{{item[column.field]}}</span>
-                    <div ng-if="item.$edit">
-                        <input class="form-control" type="{{column.type}}" 
-                        placeholder="{{item[column.field]}}" ng-model="item[column.field]" />
-                    </div>
-                    <div ng-if="column.$edit" data-ng-switch on="column.type">
-                        <div data-ng-switch-when="text">
-                            <input type="text" class="form-control" ng-model="item[column.field]" />
-                        </div>
-                        <div data-ng-switch-when="number">
-                            <input type="number" class="form-control" ng-model="item[column.field]" />
-                        </div>
-                    </div>
-                </td>
-                <!-- Render nothing on non-column edit mode -->
-                <td ng-if="!editCol && canEdit" width="45" class="active"></td>
-                <!-- Render optional inputs when creating new columns -->
-                <td ng-if="editCol && canEdit" width="200" class="active">
-                    <div data-ng-switch on="columnBuffer.type">
-                        <div data-ng-switch-when="text">
-                            <input type="text" class="form-control" ng-model="columnBuffer.data[$index]" />
-                        </div>
-                        <div data-ng-switch-when="number">
-                            <input type="number" class="form-control" ng-model="columnBuffer.data[$index]" />
-                        </div>
-                    </div>
-                </td>
-                <!-- Render action cells for editing rows -->
-                <td width="90" ng-if="canEdit" class="text-center">
-                    <div class="btn-group" ng-if="!item.$edit">
-                        <button class="btn btn-default btn-sm" 
-                            ng-disabled="editCol || editRow || canEditItem" ng-click="selectRowEdit(item)">
-                            <span class="glyphicon glyphicon-pencil"></span>
-                        </button>
-                        <button class="btn btn-danger btn-sm" 
-                            ng-disabled="editCol || editRow || canEditItem" ng-click="removeRow($index)">
-                            <span class="glyphicon glyphicon-trash"></span>
-                        </button>
-                    </div>
-                    <div class="btn-group" ng-if="item.$edit">
-                        <button class="btn btn-primary btn-sm" ng-click="toggleEdit(item)">
-              			    <span class="glyphicon glyphicon-ok"></span>
-              			</button>
-              			<button class="btn btn-warning btn-sm" ng-click="cancelRowEdit(item)">
-              				<span class="glyphicon glyphicon-remove"></span>
-              			</button>
-        		    </div>
-                </td>
-            </tr>
-        </tbody>
-        <tfoot ng-if="canEdit">
-            <tr>
-                <!-- Placeholder inputs for creating new rows -->
-                <td data-title="column.title" ng-repeat="column in columns" 
-                    ng-class="{active: column.$edit && canEditItem}">
-                    <input ng-if="editRow" class="form-control" 
-                        ng-disabled="editCol || canEditItem" 
-                        placeholder="New {{column.field}}" type="{{column.type}}" 
-                        ng-model="rowBuffer[column.field]"/>
-                    <div ng-if="column.$edit">
-                        <button class="btn btn-primary btn-sm" ng-click="toggleEdit(column)">
-              			    <span class="glyphicon glyphicon-ok"></span>
-              			</button>
-              			<button class="btn btn-warning btn-sm" ng-click="cancelColEdit(column)">
-              			    <span class="glyphicon glyphicon-remove"></span>
-              			</button>
-                    </div>
-                </td>
-                <!-- Render input type option and field name input when creating columns -->
-                <td class="active text-center">
-                    <div ng-if="editCol">
-                        <input class="form-control" placeholder="New field key" type="text" ng-model="columnBuffer.field"/>
-                        <select class="form-control" ng-model="columnBuffer.type" ng-change="columnBuffer.data = {}">
-                            <option value="text">Textfield</option>
-                            <option value="number">Number</option>
-                        </select>
-                        <br/>
-                        <button class="btn btn-primary btn-sm" ng-disabled="!canAddCol" ng-click="addColumn()">
-              			    <span class="glyphicon glyphicon-ok"></span>
-              			</button>
-              			<button class="btn btn-warning btn-sm" ng-click="reset(true)">
-              			    <span class="glyphicon glyphicon-remove"></span>
-              			</button>
-                    </div>
-                </td>
-                <!-- Action handlers for creating and cancelling row creation -->
-                <td width="90" class="text-center">
-                    <div class="btn-group">
-                        <button ng-if="!editRow" class="btn btn-primary btn-sm" ng-disabled="editCol || canEditItem" ng-click="editNewRow()">
-            		        <span class="glyphicon glyphicon-plus"></span>
-            	        </button>
-            	        <button ng-if="editRow" class="btn btn-primary btn-sm" ng-disabled="editCol || !canAddRow" ng-click="addRow()">
-            		        <span class="glyphicon glyphicon-ok"></span>
-            	        </button>
-            		    <button ng-if="editRow" class="btn btn-warning btn-sm" ng-disabled="editCol" ng-click="reset(true)">
-            		        <span class="glyphicon glyphicon-remove"></span>
-            		    </button>
-      			    </div>
-                </td>
-            </tr>
-        </tfoot>
-    </table>
-    ItemBuffer
-    <pre>{{ itemBuffer | json }}</pre>
-    RowBuffer
-    <pre>{{ rowBuffer | json }}</pre>
-    ColumnBuffer
-    <pre>{{ columnBuffer | json }}</pre>
-    Columns
-    <pre>{{ columns | json }}</pre>
-    List
-    <pre>{{ list | json }}</pre>
+	<table ng-table="tableParams" class="table ng-table-rowselected">
+		<thead>
+			<tr>
+				<!-- Header Columns for Data -->
+				<th ng-repeat="column in columns" class="sortable text-center" 
+					ng-mouseenter="showEditCol = true" ng-mouseleave="showEditCol = false"
+					ng-class="{active: column.$edit && canEditItem,
+						'sort-asc': isSortBy(column.field, 'asc'),
+						'sort-desc': isSortBy(column.field, 'desc')}"
+					ng-click="sortTable(column)">
+					<div ng-if="showEditCol && !column.$edit && canEdit" 
+						 ng-hide="editCol || editRow || canEditItem" class="btn-group">
+						<button class="btn btn-default btn-xs" ng-if="canEdit" ng-click="selectColumnEdit(column)">
+							<span class="glyphicon glyphicon-pencil"></span>
+						</button>
+						<button class="btn btn-danger btn-xs" ng-if="canEdit" ng-click="removeColumn($index)">
+							<span class="glyphicon glyphicon-remove"></span>
+						</button>
+					</div><br/>
+					<span ng-if="!column.$edit">{{column.title}}</span>
+					<div ng-if="column.$edit">
+						<input type="text" class="form-control" ng-model="column.title" />
+					</div>
+				</th>
+				<!-- Edit Column Header -->
+				<th ng-if="!editCol && canEdit" width="45">
+					<button class="btn btn-default btn-sm" ng-if="!editCol" ng-disabled="editRow || canEditItem" ng-click="editNewColumn()">
+					  <span class="glyphicon glyphicon-plus"></span>
+				  </button>
+				</th>
+				<!-- Action Column Header -->
+				<th ng-if="editCol && canEdit" width="200">
+					<input type="text" placeholder="New Column Title" class="form-control" ng-model="columnBuffer.title" />
+				</th>
+				<th ng-if="canEdit">Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="item in $data | filter:search:strict" ng-class="{active: item.$edit && canEditItem}">
+				<!-- Render each cell per row of data -->
+				<td class="text-center" ng-repeat="column in columns" 
+					ng-class="{active: column.$edit && canEditItem}"
+					filter="filterTable(column)">
+					<span ng-if="!item.$edit && !column.$edit">{{item[column.field]}}</span>
+					<div ng-if="item.$edit">
+						<input class="form-control" type="{{column.type}}" 
+						placeholder="{{item[column.field]}}" ng-model="item[column.field]" />
+					</div>
+					<div ng-if="column.$edit" data-ng-switch on="column.type">
+						<div data-ng-switch-when="text">
+							<input type="text" class="form-control" ng-model="item[column.field]" />
+						</div>
+						<div data-ng-switch-when="number">
+							<input type="number" class="form-control" ng-model="item[column.field]" />
+						</div>
+					</div>
+				</td>
+				<!-- Render nothing on non-column edit mode -->
+				<td ng-if="!editCol && canEdit" width="45" class="active"></td>
+				<!-- Render optional inputs when creating new columns -->
+				<td ng-if="editCol && canEdit" width="200" class="active">
+					<div data-ng-switch on="columnBuffer.type">
+						<div data-ng-switch-when="text">
+							<input type="text" class="form-control" ng-model="columnBuffer.data[$index]" />
+						</div>
+						<div data-ng-switch-when="number">
+							<input type="number" class="form-control" ng-model="columnBuffer.data[$index]" />
+						</div>
+					</div>
+				</td>
+				<!-- Render action cells for editing rows -->
+				<td width="90" ng-if="canEdit" class="text-center">
+					<div class="btn-group" ng-if="!item.$edit">
+						<button class="btn btn-default btn-sm" 
+							ng-disabled="editCol || editRow || canEditItem" ng-click="selectRowEdit(item)">
+							<span class="glyphicon glyphicon-pencil"></span>
+						</button>
+						<button class="btn btn-danger btn-sm" 
+							ng-disabled="editCol || editRow || canEditItem" ng-click="removeRow($index)">
+							<span class="glyphicon glyphicon-trash"></span>
+						</button>
+					</div>
+					<div class="btn-group" ng-if="item.$edit">
+						<button class="btn btn-primary btn-sm" ng-click="toggleEdit(item)">
+							<span class="glyphicon glyphicon-ok"></span>
+						</button>
+						<button class="btn btn-warning btn-sm" ng-click="cancelRowEdit(item)">
+							<span class="glyphicon glyphicon-remove"></span>
+						</button>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+		<tfoot ng-if="canEdit">
+			<tr>
+				<!-- Placeholder inputs for creating new rows -->
+				<td data-title="column.title" ng-repeat="column in columns" 
+					ng-class="{active: column.$edit && canEditItem}">
+					<input ng-if="editRow" class="form-control" 
+						ng-disabled="editCol || canEditItem" 
+						placeholder="New {{column.field}}" type="{{column.type}}" 
+						ng-model="rowBuffer[column.field]"/>
+					<div ng-if="column.$edit">
+						<button class="btn btn-primary btn-sm" ng-click="toggleEdit(column)">
+							<span class="glyphicon glyphicon-ok"></span>
+						</button>
+						<button class="btn btn-warning btn-sm" ng-click="cancelColEdit(column)">
+							<span class="glyphicon glyphicon-remove"></span>
+						</button>
+					</div>
+				</td>
+				<!-- Render input type option and field name input when creating columns -->
+				<td class="active text-center">
+					<div ng-if="editCol">
+						<input class="form-control" placeholder="New field key" type="text" ng-model="columnBuffer.field"/>
+						<select class="form-control" ng-model="columnBuffer.type" ng-change="columnBuffer.data = {}">
+							<option value="text">Textfield</option>
+							<option value="number">Number</option>
+						</select>
+						<br/>
+						<button class="btn btn-primary btn-sm" ng-disabled="!canAddCol" ng-click="addColumn()">
+							<span class="glyphicon glyphicon-ok"></span>
+						</button>
+						<button class="btn btn-warning btn-sm" ng-click="reset(true)">
+							<span class="glyphicon glyphicon-remove"></span>
+						</button>
+					</div>
+				</td>
+				<!-- Action handlers for creating and cancelling row creation -->
+				<td width="90" class="text-center">
+					<div class="btn-group">
+						<button ng-if="!editRow" class="btn btn-primary btn-sm" ng-disabled="editCol || canEditItem" ng-click="editNewRow()">
+							<span class="glyphicon glyphicon-plus"></span>
+						</button>
+						<button ng-if="editRow" class="btn btn-primary btn-sm" ng-disabled="editCol || !canAddRow" ng-click="addRow()">
+							<span class="glyphicon glyphicon-ok"></span>
+						</button>
+						<button ng-if="editRow" class="btn btn-warning btn-sm" ng-disabled="editCol" ng-click="reset(true)">
+							<span class="glyphicon glyphicon-remove"></span>
+						</button>
+					</div>
+				</td>
+			</tr>
+		</tfoot>
+	</table>
+	ItemBuffer
+	<pre>{{ itemBuffer | json }}</pre>
+	RowBuffer
+	<pre>{{ rowBuffer | json }}</pre>
+	ColumnBuffer
+	<pre>{{ columnBuffer | json }}</pre>
+	Columns
+	<pre>{{ columns | json }}</pre>
+	List
+	<pre>{{ list | json }}</pre>
 </div>

@@ -9,7 +9,7 @@
  * the structure of the objects store in the list. If no template is provided,
  * then an array of objects with a name, value pair will be stored.
  * 
- * A "canEdit" flag will allow the client to modify the object structure
+ * A \"canEdit\" flag will allow the client to modify the object structure
  * by creating, renaming, and deleting object properties.
  * 
  * Dependencies:
@@ -21,6 +21,7 @@ angular.module('listDirective', [])
     return {
         restrict: 'E',
         require: "^list",
+        replace: true,
         scope: {
             canEdit: '@',
             list: '=',

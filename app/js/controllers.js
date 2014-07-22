@@ -7,6 +7,23 @@ angular.module('controllers', [])
 	var data = angular.copy($scope.list);
 	var columns = angular.copy($scope.columns);
 
+	if (!data) {
+		console.log('Undefined data!');
+		// $scope.list = [
+		// 	{name: "Moroni", age: 50},
+		// 	{name: "Tiancum", age: 43, weight: 189, complexion: "dark"},
+		// 	{name: "Jacob", age: 27},
+		// 	{name: "Nephi", age: 29, complexion: "fair"}
+		// ];
+		
+		// $scope.columns = [
+		// 	{ title: 'Name of Person', field: 'name', type: 'text'},
+		// 	{ title: 'Age of Person', field: 'age', type: 'number'}
+		// ];
+		// data = angular.copy($scope.list);
+		// columns = angular.copy($scope.columns);
+	}
+	
 	// public variable for determining if table is editable
 	$scope.canEdit = $scope.canEdit || false;
 

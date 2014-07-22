@@ -9,7 +9,7 @@ module.exports = function(config){
       'app/bower_components/angular-mocks/angular-mocks.js',
       'node_modules/lodash/dist/lodash.js',
       'app/bower_components/ng-table/ng-table.js',
-      'app/js/**/*.js',
+      'app/js/*.js',
       'test/unit/**/*.js',
       'app/partials/ListEditor.html'
     ],
@@ -17,6 +17,11 @@ module.exports = function(config){
     // generate js files from html templates
     preprocessors: {
       'app/partials/ListEditor.html': 'ng-html2js'
+    },
+
+    ngHtml2JsPreprocessor: {
+      // strip this from the file path
+      stripPrefix: 'app/'
     },
 
     autoWatch : true,

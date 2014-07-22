@@ -3,7 +3,7 @@
 describe('List Editor Controller Test Suite', function(){
 	
 	beforeEach(module('ngTable', 'controllers'));
-
+	
 	var $scope, ctrl;
 	beforeEach(inject(function ($rootScope, $controller) {
 		$scope = $rootScope.$new();
@@ -212,7 +212,7 @@ describe('List Editor Controller Test Suite', function(){
 			var disabledAddRow = $scope.editCol || $scope.canEditItem;
 			return disabledEditItem && disabledAddCol && disabledAddRow;
 		}
-		
+
 		it('should disable [adding new row/col, editing col] when editing row', function() {
 			_.each($scope.list, function(row) {
 				$scope.selectRowEdit(row);

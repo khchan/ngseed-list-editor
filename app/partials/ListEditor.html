@@ -19,8 +19,9 @@
                 <th ng-repeat="column in columns" class="sortable text-center" 
                     ng-mouseenter="showEditCol = true" ng-mouseleave="showEditCol = false"
                     ng-class="{active: column.$edit && canEditItem,
-                        'sort-desc': tableParams.isSortBy('name', 'asc')}"
-                    ng-click="sortTable(column.field)">
+                        'sort-asc': isSortBy(column.field, 'asc'),
+                        'sort-desc': isSortBy(column.field, 'desc')}"
+                    ng-click="sortTable(column)">
                     <div ng-if="showEditCol && !column.$edit && canEdit" 
                          ng-hide="editCol || editRow || canEditItem" class="btn-group">
                         <button class="btn btn-default btn-xs" ng-if="canEdit" ng-click="selectColumnEdit(column)">

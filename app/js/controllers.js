@@ -149,6 +149,13 @@ angular.module('controllers', [])
 	    _.each(_.keys($scope.columnBuffer.data), function(k) {
 	        $scope.list[k][newCol.field] = $scope.columnBuffer.data[k];
 	    });
+
+	    // fill non-provided data values with empty string
+	    _.each($scope.list, function(row) {
+	    	if (row[newCol.field] === undefined) {
+	    		row[newCol.field] = '';
+	    	}
+	    });
 	    
 	    $scope.tableParams.reload();
 	    $scope.columnBuffer = {};
@@ -215,9 +222,15 @@ angular.module('controllers', [])
 	    $scope: { $data: {} }
 	});
 
+	$scope.isSortBy = function(column, order) {
+		return $scope.tableParams.isSortBy(column, order);
+	};
+
 	$scope.sortTable = function(column) {
 	    var sortParam = {};
-	    sortParam[column] = $scope.tableParams.isSortBy(column, 'asc') ? 'desc' : 'asc';
-	    $scope.tableParams.sorting(sortParam);
+	    if (!column.$edit) {
+			sortParam[column.field] = $scope.tableParams.isSortBy(column.field, 'asc') ? 'desc' : 'asc';
+			$scope.tableParams.sorting(sortParam);	    	
+	    }
 	};
 });

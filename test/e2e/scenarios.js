@@ -1,42 +1,32 @@
 'use strict';
 
-/* https://github.com/angular/protractor/blob/master/docs/getting-started.md */
+describe('E2E Testing for List Editor Module', function() {
 
-describe('my app', function() {
+	browser.get('index.html');
 
-  browser.get('index.html');
+	describe('Saving and cancelling of row/column actions', function() {
 
-  it('should automatically redirect to /view1 when location hash/fragment is empty', function() {
-    expect(browser.getLocationAbsUrl()).toMatch("/view1");
-  });
+		// Cancelling data edits
+		it('should edit row and cancel data', function() {
+			element(by.id('selectRowEditID_0')).click();
+			element(by.id('cancelRowEditID_0')).click();
 
+			element(by.id('selectRowEditID_1')).click();
+			element(by.id('cancelRowEditID_1')).click();
 
-  describe('view1', function() {
+			element(by.id('selectRowEditID_2')).click();
+			element(by.id('cancelRowEditID_2')).click();
 
-    beforeEach(function() {
-      browser.get('index.html#/view1');
-    });
+			element(by.id('selectRowEditID_3')).click();
+			element(by.id('cancelRowEditID_3')).click();
+			
+			return true;
+		});
 
+		it('should create a new row successfully', function() {
+			element(by.css('tfoot > tr > td > div.btn-group > button.btn-primary')).click();
+			return true;
+		});
 
-    it('should render view1 when user navigates to /view1', function() {
-      expect(element.all(by.css('[ng-view] p')).first().getText()).
-        toMatch(/partial for view 1/);
-    });
-
-  });
-
-
-  describe('view2', function() {
-
-    beforeEach(function() {
-      browser.get('index.html#/view2');
-    });
-
-
-    it('should render view2 when user navigates to /view2', function() {
-      expect(element.all(by.css('[ng-view] p')).first().getText()).
-        toMatch(/partial for view 2/);
-    });
-
-  });
+	});
 });

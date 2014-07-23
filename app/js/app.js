@@ -9,7 +9,7 @@ angular.module('main', [
 ])
 
 .controller('MainCtrl', function($scope) {
-    $scope.data = [
+    $scope.list = [
         {name: "Moroni", age: 50},
         {name: "Tiancum", age: 43, weight: 189, complexion: "dark"},
         {name: "Jacob", age: 27},

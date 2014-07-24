@@ -6,10 +6,6 @@ AngularJS directive wrapper for dynamic row/column management for
 
 See it in action [here][plunker]
 
-Version
--------
-0.0
-
 Dependencies
 ------------
 (Make sure you've included these scripts before including nglist-editor)

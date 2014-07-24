@@ -23,7 +23,7 @@ angular.module("partials/ListEditor.html", []).run(["$templateCache", function($
  * ngTable, angular-bootstrap
  *
  * Usage:
-    angular.module('nglist-editor', [])
+    angular.module('main', ['nglist-editor'])
     .controller('MainCtrl', function($scope) {
         $scope.list = [
             {name: "Moroni", age: 50},

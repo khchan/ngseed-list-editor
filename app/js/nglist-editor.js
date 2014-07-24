@@ -29,7 +29,7 @@
             { title: 'Age of Person', field: 'age', type: 'number'}
         ];
     });
- */
+*/
 
 angular.module('nglist-editor', [
 	'ui.bootstrap',

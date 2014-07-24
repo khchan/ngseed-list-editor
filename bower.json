@@ -1,8 +1,13 @@
 {
-  "name": "angular-seed",
-  "description": "A starter project for AngularJS",
+  "name": "nglist-editor",
+  "author": "khchan (Kevin Chan)",
+  "description": "AngularJS List Editor",
   "version": "0.0.0",
-  "homepage": "https://github.com/angular/angular-seed",
+  "homepage": "https://github.com/khchan/ngseed-list-editor",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/khchan/ngseed-list-editor.git"
+  },
   "license": "MIT",
   "private": true,
   "dependencies": {
@@ -19,5 +24,6 @@
   },
   "resolutions": {
     "angular": "1.3.x"
-  }
+  },
+  "ignore": ["./app", "./node_modules", "./test"]
 }

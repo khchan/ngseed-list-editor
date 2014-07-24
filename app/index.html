@@ -9,7 +9,7 @@
   <title>AngularJS List Editor</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="bower_components/bootstrap-css/css/bootstrap.min.css">
   <link rel="stylesheet" href="bower_components/ng-table/ng-table.min.css">
 </head>
     
@@ -20,12 +20,13 @@
   <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
   <script src="bower_components/ng-table/ng-table.min.js"></script>
   <script src="../dist/nglist-editor.min.js"></script>
+
   <script type="text/javascript">
     angular.module('main', ['nglist-editor'])
     .controller('MainCtrl', function($scope) {
         $scope.list = [
             {name: "Moroni", age: 50},
-            {name: "Tiancum", age: 43, weight: 189, complexion: "dark"},
+            {name: few"Tiancum", age: 43, weight: 189, complexion: "dark"},
             {name: "Jacob", age: 27},
             {name: "Nephi", age: 29, complexion: "fair"}
         ];

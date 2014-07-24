@@ -11,7 +11,7 @@ module.exports = function (grunt) {
         html2js: {
             options: {
                 base: 'app',
-                module: 'nglist-editor',
+                module: 'nglist-templates',
                 htmlmin: {
                     collapseBooleanAttributes: true,
                     collapseWhitespace: true,
@@ -31,8 +31,12 @@ module.exports = function (grunt) {
 
         concat: {
             options: {
-                separator: ';'
+                separator: ';',
+                process: function(src, filepath) {
+                    return src.replace(/[/*<%]{4}.*[%>*/]{4}/g, '"nglist-templates",');
+                }
             },
+
             dist: {
                 src: ['.tmp/templates.js', 'app/js/nglist-editor.js'],
                 dest: 'dist/nglist-editor.js'

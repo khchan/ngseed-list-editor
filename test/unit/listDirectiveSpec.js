@@ -3,7 +3,7 @@
 /* jasmine specs for directives go here */
 
 describe('List Editor Directives', function() {
-	beforeEach(module('ngTable', 'controllers', 'listDirective'));
+	beforeEach(module('nglist-editor'));
 
 	// load the templates
 	beforeEach(module('partials/ListEditor.html'));

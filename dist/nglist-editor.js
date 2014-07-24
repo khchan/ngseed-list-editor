@@ -1,4 +1,4 @@
-angular.module('nglist-editor', ['partials/ListEditor.html']);
+angular.module('nglist-templates', ['partials/ListEditor.html']);
 
 angular.module("partials/ListEditor.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/ListEditor.html",
@@ -41,6 +41,7 @@ angular.module("partials/ListEditor.html", []).run(["$templateCache", function($
 
 angular.module('nglist-editor', [
 	'ui.bootstrap',
+    "nglist-templates",
 	'ngTable'
 ])
 

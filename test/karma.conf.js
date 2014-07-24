@@ -5,8 +5,9 @@ module.exports = function(config){
 
     files : [
       'app/bower_components/angular/angular.js',
-      'app/bower_components/angular-route/angular-route.js',
       'app/bower_components/angular-mocks/angular-mocks.js',
+      'app/bower_components/angular-bootstrap/ui-bootstrap.min.js',
+      'app/bower_components/angular-bootstrap/ui-bootstrap.tpls.min.js',
       'node_modules/lodash/dist/lodash.js',
       'app/bower_components/ng-table/ng-table.js',
       'app/js/*.js',

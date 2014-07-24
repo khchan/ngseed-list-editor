@@ -4,6 +4,7 @@ nglist-editor
 AngularJS directive wrapper for dynamic row/column management for 
 [ngTable] [ngTable]
 
+See it in action [here][plunker]
 
 Version
 -------
@@ -65,6 +66,7 @@ License
 -------
 MIT
 
+[plunker]:http://embed.plnkr.co/yIrAfMzQbPrKjwUu0P6q/preview
 [angular]:https://angularjs.org
 [angular-bootstrap]:http://angular-ui.github.io/bootstrap/
 [bootstrap-css]:https://github.com/codemix/bootstrap-css

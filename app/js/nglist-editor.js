@@ -37,25 +37,66 @@ angular.module('nglist-editor', [
 	'ngTable'
 ])
 
-.directive('listEditor', function() {
+.directive('listEditor', function ($interval) {
     return {
         restrict: 'E',
-        require: "^list",
         replace: true,
         scope: {
+            title: '@',
             canEdit: '@',
             list: '=',
             columns: '='
         },
         templateUrl: 'partials/ListEditor.html',
-        controller: 'ListController'
+        controller: 'ListController',
+        link: {
+            pre: function preLink(scope, element, attrs) {
+                var unregister = scope.$watch('list', function (newval, oldval) {
+                    if (newval.length > 0) {
+                        scope.affixMissingColumns(scope.list, scope.columns);
+                        scope.tableParams.reload();
+                        unregister();
+                    };
+                }, true);
+            },
+            post: function postLink(scope, element, attr) {                
+                /**
+                 * Watchers for validating new col/row fields without forms
+                 */
+                scope.$watchCollection('search', function(newVal, oldVal) {
+                    if (newVal) {
+                        console.log('Search');
+                        scope.tableParams.reload();
+                    }
+                });  
+
+                scope.$watchCollection('itemBuffer', function(newVal) {
+                    scope.canEditItem = _.values(newVal).length !== 0;
+                });
+
+                scope.$watchCollection('rowBuffer', function(newVal) {
+                    // allow row to be added if all fields are non-empty
+                    scope.canAddRow = _.compact(_.values(newVal)).length == scope.columns.length;
+                });
+
+                scope.$watchCollection('columnBuffer', function(newVal) {
+                    // allow column to be added if new column title, field,
+                    // type are non-empty and data object exists in columnBuffer
+                    var filledCols = _.compact(_.values(newVal)).length == 4;
+                    var isUniqueCol = _.indexOf(_.pluck(scope.columns, 'field'), newVal.field) < 0;
+                    scope.canAddCol = filledCols && isUniqueCol;
+                });
+            }
+        }
     };
 })
 
-.controller('ListController', function ($scope, $filter, ngTableParams) {
+.controller('ListController', function ($scope, $filter, $timeout, ngTableParams) {
     var data = angular.copy($scope.list);
     var columns = angular.copy($scope.columns);
 
+    // public variable for title of the list table
+    $scope.title = $scope.title || 'Items';
     // public variable for determining if table is editable
     $scope.canEdit = $scope.canEdit || false;
 
@@ -78,7 +119,7 @@ angular.module('nglist-editor', [
      * flatten and union mismatched keys (duplicate columns are merged)
      * and return proper evenly column-matched data
      */
-    var affixMissingColumns = function(listInput, colInput) {
+    $scope.affixMissingColumns = function(listInput, colInput) {
         var missingCols = [];
         // determine duplicate-free column names from list
         _.chain(_.union(_.flatten(_.map(listInput, _.keys))))
@@ -110,7 +151,7 @@ angular.module('nglist-editor', [
     };
 
     // Fix possibly mismatched data
-    affixMissingColumns(data, columns);
+    $scope.affixMissingColumns(data, columns);
     angular.copy(data, $scope.list);
     angular.copy(columns, $scope.columns);
 
@@ -131,8 +172,9 @@ angular.module('nglist-editor', [
         $scope.toggleEdit(item);
     };
 
-    $scope.removeRow = function(index) {
-        $scope.list.splice(index, 1);
+    $scope.removeRow = function(item) {
+        var idx = $scope.list.indexOf(item);
+        $scope.list.splice(idx, 1);
         $scope.tableParams.reload();
     };
 
@@ -212,26 +254,6 @@ angular.module('nglist-editor', [
     };
 
     /**
-     * Watchers for validating new col/row fields without forms
-     */
-    $scope.$watchCollection('itemBuffer', function(newVal) {
-        $scope.canEditItem = _.values(newVal).length !== 0;
-    });
-
-    $scope.$watchCollection('rowBuffer', function(newVal) {
-        // allow row to be added if all fields are non-empty
-        $scope.canAddRow = _.compact(_.values(newVal)).length == $scope.columns.length;
-    });
-
-    $scope.$watchCollection('columnBuffer', function(newVal) {
-        // allow column to be added if new column title, field,
-        // type are non-empty and data object exists in columnBuffer
-        var filledCols = _.compact(_.values(newVal)).length == 4;
-        var isUniqueCol = _.indexOf(_.pluck($scope.columns, 'field'), newVal.field) < 0;
-        $scope.canAddCol = filledCols && isUniqueCol;
-    });
-
-    /**
      * Function for toggling existing row or column edits
      */
     $scope.toggleEdit = function(item) {
@@ -261,11 +283,15 @@ angular.module('nglist-editor', [
     }, {
         total: $scope.list.length,
         getData: function($defer, params) {
+            // use build-in angular filter
+            var filteredData = params.filter() ?
+                    $filter('filter')($scope.list, params.filter()) :
+                    $scope.list;
             var orderedData = params.sorting() ?
-                $filter('orderBy')($scope.list, params.orderBy()) :
-                $scope.list;
+                    $filter('orderBy')(filteredData, params.orderBy()) :
+                    $scope.list;
 
-            params.total($scope.list.length); // set total for recalc pagination
+            params.total(orderedData.length); // set total for recalc pagination
             $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
         },
         $scope: { $data: {} }

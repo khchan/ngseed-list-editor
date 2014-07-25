@@ -1,24 +1,27 @@
 <div class="row">
+	<style>.selectEdit {background-color: #f5f5f5;width: 200px;}</style>
 	<br/>
-	<div class="form-inline pull-right">
-		<div class="form-group">
-			<label>Sorting: {{tableParams.sorting()|json}}</label>
-		</div>
-		<div class="form-group">
-			<input type="text" placeholder="Search" class="form-control" ng-model="search.$">
-		</div>
-		<div class="form-group">
+	<div class="jumbotron">
+		<h1>{{title}}</h1>
+		<blockquote>
+			<p><strong>Sorting:</strong> {{tableParams.sorting()|json}}
+			<p><strong>Filter:</strong> {{tableParams.filter()|json}}
+		</blockquote>
+		<form class="navbar-form navbar-right" role="search">
+			<div class="form-group">
+				<input type="text" placeholder="Search" class="form-control" ng-model="search.$">
+			</div>
 			<button ng-click="tableParams.sorting({})" class="btn btn-default">Clear sorting</button>
-		</div>
-	</div>
+		</form>
+	</div>	
 
-	<table ng-table="tableParams" class="table ng-table-rowselected">
+	<table ng-table="tableParams" show-filter="true" class="table ng-table-rowselected">
 		<thead>
 			<tr>
 				<!-- Header Columns for Data -->
 				<th ng-repeat="column in columns" class="sortable text-center" 
 					ng-mouseenter="showEditCol = true" ng-mouseleave="showEditCol = false"
-					ng-class="{active: column.$edit && canEditItem,
+					ng-class="{selectEdit: column.$edit && canEditItem,
 						'sort-asc': isSortBy(column.field, 'asc'),
 						'sort-desc': isSortBy(column.field, 'desc')}"
 					ng-click="sortTable(column)">
@@ -32,29 +35,28 @@
 						</button>
 					</div><br/>
 					<span ng-if="!column.$edit">{{column.title}}</span>
-					<div ng-if="column.$edit">
+					<div ng-if="column.$edit" width="200">
 						<input type="text" class="form-control" ng-model="column.title" />
 					</div>
 				</th>
 				<!-- Edit Column Header -->
-				<th ng-if="!editCol && canEdit" width="45">
+				<th ng-if="!editCol && canEdit"width="45">
 					<button class="btn btn-default btn-sm" ng-if="!editCol" ng-disabled="editRow || canEditItem" ng-click="editNewColumn()">
 					  <span class="glyphicon glyphicon-plus"></span>
 				  </button>
 				</th>
 				<!-- Action Column Header -->
-				<th ng-if="editCol && canEdit" width="200">
+				<th ng-if="editCol && canEdit" class="selectEdit" width="200">
 					<input type="text" placeholder="New Column Title" class="form-control" ng-model="columnBuffer.title" />
 				</th>
 				<th ng-if="canEdit">Actions</th>
 			</tr>
 		</thead>
 		<tbody>
-			<tr ng-repeat="item in $data | filter:search:strict" ng-class="{active: item.$edit && canEditItem}">
+			<tr ng-repeat="item in $data | filter:search:strict" ng-class="{selectEdit: item.$edit && canEditItem}">
 				<!-- Render each cell per row of data -->
 				<td class="text-center" ng-repeat="column in columns" 
-					ng-class="{active: column.$edit && canEditItem}"
-					filter="filterTable(column)">
+					ng-class="{selectEdit: column.$edit && canEditItem}">
 					<span ng-if="!item.$edit && !column.$edit">{{item[column.field]}}</span>
 					<div ng-if="item.$edit">
 						<input class="form-control" type="{{column.type}}" 
@@ -70,9 +72,9 @@
 					</div>
 				</td>
 				<!-- Render nothing on non-column edit mode -->
-				<td ng-if="!editCol && canEdit" width="45" class="active"></td>
+				<td ng-if="!editCol && canEdit" width="45"></td>
 				<!-- Render optional inputs when creating new columns -->
-				<td ng-if="editCol && canEdit" width="200" class="active">
+				<td ng-if="editCol && canEdit" width="200" class="selectEdit">
 					<div data-ng-switch on="columnBuffer.type">
 						<div data-ng-switch-when="text">
 							<input type="text" class="form-control" ng-model="columnBuffer.data[$index]" />
@@ -90,7 +92,7 @@
 							<span class="glyphicon glyphicon-pencil"></span>
 						</button>
 						<button id="removeRowID_{{$index}}" class="btn btn-danger btn-sm" 
-							ng-disabled="editCol || editRow || canEditItem" ng-click="removeRow($index)">
+							ng-disabled="editCol || editRow || canEditItem" ng-click="removeRow(item)">
 							<span class="glyphicon glyphicon-trash"></span>
 						</button>
 					</div>
@@ -111,7 +113,7 @@
 			<tr>
 				<!-- Placeholder inputs for creating new rows -->
 				<td data-title="column.title" ng-repeat="column in columns" 
-					ng-class="{active: column.$edit && canEditItem}">
+					ng-class="{selectEdit: column.$edit && canEditItem}">
 					<input ng-if="editRow" class="form-control" 
 						ng-disabled="editCol || canEditItem" 
 						placeholder="New {{column.field}}" type="{{column.type}}" 
@@ -126,7 +128,7 @@
 					</div>
 				</td>
 				<!-- Render input type option and field name input when creating columns -->
-				<td class="active text-center">
+				<td class="text-center" ng-class="{'selectEdit': editCol}">
 					<div ng-if="editCol">
 						<input class="form-control" placeholder="New field key" type="text" ng-model="columnBuffer.field"/>
 						<select class="form-control" ng-model="columnBuffer.type" ng-change="columnBuffer.data = {}">

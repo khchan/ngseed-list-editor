@@ -286,11 +286,13 @@ angular.module('nglist-editor', [
 
         var getFOData = function(data, params) {
             var filteredData = $scope.search ?
-                $filter('filter')(data, $scope.search) :
-                data;
-            var orderedData = params.sorting() ?
-                $filter('orderBy')(filteredData, params.orderBy()) :
-                data;
+                $filter('filter')(data, $scope.search) : data;
+            
+            var orderedData = filteredData;
+            if (params.orderBy().length > 0) {
+                orderedData = params.sorting() ?
+                    $filter('orderBy')(filteredData, params.orderBy()) : data;
+            }
             return orderedData;
         }
 

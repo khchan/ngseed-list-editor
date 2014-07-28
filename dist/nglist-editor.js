@@ -2,9 +2,9 @@ angular.module('nglist-templates', ['partials/ListEditor.html']);
 
 angular.module("partials/ListEditor.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("partials/ListEditor.html",
-    "<div class=row><br><div class=jumbotron><h1>Hello, world!</h1><p>...</p><p><a class=\"btn btn-primary btn-lg\" role=button>Learn more</a></p><div class=container><div class=\"form-inline pull-right\"><br><div class=form-group><label>Sorting: {{tableParams.sorting()|json}}</label></div><div class=form-group><input placeholder=Search class=form-control ng-model=search.$></div><div class=form-group><button ng-click=tableParams.sorting({}) class=\"btn btn-default\">Clear sorting</button></div><br></div></div></div><table ng-table=tableParams class=\"table ng-table-rowselected\"><thead><tr><th ng-repeat=\"column in columns\" class=\"sortable text-center\" ng-mouseenter=\"showEditCol = true\" ng-mouseleave=\"showEditCol = false\" ng-class=\"{active: column.$edit && canEditItem,\n" +
+    "<div class=row><style>.selectEdit {background-color: #f5f5f5;width: 200px;}</style><br><div class=\"well well-lg\"><h1>{{title}}</h1><form class=\"navbar-form navbar-right\" role=search><div class=form-group><input placeholder=Search class=form-control ng-model=search.$></div><button ng-click=tableParams.sorting({}) class=\"btn btn-default\">Clear sorting</button></form><blockquote><p><strong>Total:</strong> <span class=\"label label-info\">{{list.length}}</span></p></blockquote></div><table ng-table=tableParams class=\"table ng-table-rowselected\"><thead><tr><th ng-repeat=\"column in columns\" class=\"sortable text-center\" ng-mouseenter=\"showEditCol = true\" ng-mouseleave=\"showEditCol = false\" ng-class=\"{selectEdit: column.$edit && canEditItem,\n" +
     "						'sort-asc': isSortBy(column.field, 'asc'),\n" +
-    "						'sort-desc': isSortBy(column.field, 'desc')}\" ng-click=sortTable(column)><div ng-if=\"showEditCol && !column.$edit && canEdit\" ng-hide=\"editCol || editRow || canEditItem\" class=btn-group><button class=\"btn btn-default btn-xs\" ng-if=canEdit ng-click=selectColumnEdit(column)><span class=\"glyphicon glyphicon-pencil\"></span></button> <button class=\"btn btn-danger btn-xs\" ng-if=canEdit ng-click=removeColumn($index)><span class=\"glyphicon glyphicon-remove\"></span></button></div><br><span ng-if=!column.$edit>{{column.title}}</span><div ng-if=column.$edit><input class=form-control ng-model=column.title></div></th><th ng-if=\"!editCol && canEdit\" width=45><button class=\"btn btn-default btn-sm\" ng-if=!editCol ng-disabled=\"editRow || canEditItem\" ng-click=editNewColumn()><span class=\"glyphicon glyphicon-plus\"></span></button></th><th ng-if=\"editCol && canEdit\" width=200><input placeholder=\"New Column Title\" class=form-control ng-model=columnBuffer.title></th><th ng-if=canEdit>Actions</th></tr></thead><tbody><tr ng-repeat=\"item in $data | filter:search:strict\" ng-class=\"{active: item.$edit && canEditItem}\"><td class=text-center ng-repeat=\"column in columns\" ng-class=\"{active: column.$edit && canEditItem}\" filter=filterTable(column)><span ng-if=\"!item.$edit && !column.$edit\">{{item[column.field]}}</span><div ng-if=item.$edit><input class=form-control type={{column.type}} placeholder={{item[column.field]}} ng-model=item[column.field]></div><div ng-if=column.$edit data-ng-switch on=column.type><div data-ng-switch-when=text><input class=form-control ng-model=item[column.field]></div><div data-ng-switch-when=number><input type=number class=form-control ng-model=item[column.field]></div></div></td><td ng-if=\"!editCol && canEdit\" width=45 class=active></td><td ng-if=\"editCol && canEdit\" width=200 class=active><div data-ng-switch on=columnBuffer.type><div data-ng-switch-when=text><input class=form-control ng-model=columnBuffer.data[$index]></div><div data-ng-switch-when=number><input type=number class=form-control ng-model=columnBuffer.data[$index]></div></div></td><td width=90 ng-if=canEdit class=text-center><div class=btn-group ng-if=!item.$edit><button id=selectRowEditID_{{$index}} class=\"btn btn-default btn-sm\" ng-disabled=\"editCol || editRow || canEditItem\" ng-click=selectRowEdit(item)><span class=\"glyphicon glyphicon-pencil\"></span></button> <button id=removeRowID_{{$index}} class=\"btn btn-danger btn-sm\" ng-disabled=\"editCol || editRow || canEditItem\" ng-click=removeRow($index)><span class=\"glyphicon glyphicon-trash\"></span></button></div><div class=btn-group ng-if=item.$edit><button id=toggleEditID_{{$index}} class=\"btn btn-primary btn-sm\" ng-click=toggleEdit(item)><span class=\"glyphicon glyphicon-ok\"></span></button> <button id=cancelRowEditID_{{$index}} class=\"btn btn-warning btn-sm\" ng-click=cancelRowEdit(item)><span class=\"glyphicon glyphicon-remove\"></span></button></div></td></tr></tbody><tfoot ng-if=canEdit><tr><td data-title=column.title ng-repeat=\"column in columns\" ng-class=\"{active: column.$edit && canEditItem}\"><input ng-if=editRow class=form-control ng-disabled=\"editCol || canEditItem\" placeholder=\"New {{column.field}}\" type={{column.type}} ng-model=rowBuffer[column.field]><div ng-if=column.$edit><button class=\"btn btn-primary btn-sm\" ng-click=toggleEdit(column)><span class=\"glyphicon glyphicon-ok\"></span></button> <button class=\"btn btn-warning btn-sm\" ng-click=cancelColEdit(column)><span class=\"glyphicon glyphicon-remove\"></span></button></div></td><td class=\"active text-center\"><div ng-if=editCol><input class=form-control placeholder=\"New field key\" ng-model=columnBuffer.field><select class=form-control ng-model=columnBuffer.type ng-change=\"columnBuffer.data = {}\"><option value=text>Textfield</option><option value=number>Number</option></select><br><button class=\"btn btn-primary btn-sm\" ng-disabled=!canAddCol ng-click=addColumn()><span class=\"glyphicon glyphicon-ok\"></span></button> <button class=\"btn btn-warning btn-sm\" ng-click=reset(true)><span class=\"glyphicon glyphicon-remove\"></span></button></div></td><td width=90 class=text-center><div class=btn-group><button ng-if=!editRow class=\"btn btn-primary btn-sm\" ng-disabled=\"editCol || canEditItem\" ng-click=editNewRow()><span class=\"glyphicon glyphicon-plus\"></span></button> <button ng-if=editRow class=\"btn btn-primary btn-sm\" ng-disabled=\"editCol || !canAddRow\" ng-click=addRow()><span class=\"glyphicon glyphicon-ok\"></span></button> <button ng-if=editRow class=\"btn btn-warning btn-sm\" ng-disabled=editCol ng-click=reset(true)><span class=\"glyphicon glyphicon-remove\"></span></button></div></td></tr></tfoot></table></div>");
+    "						'sort-desc': isSortBy(column.field, 'desc')}\" ng-click=sortTable(column)><div ng-if=\"showEditCol && !column.$edit && canEdit\" ng-hide=\"editCol || editRow || canEditItem\" class=btn-group><button class=\"btn btn-default btn-xs\" ng-if=canEdit ng-click=selectColumnEdit(column)><span class=\"glyphicon glyphicon-pencil\"></span></button> <button class=\"btn btn-danger btn-xs\" ng-if=canEdit ng-click=removeColumn($index)><span class=\"glyphicon glyphicon-remove\"></span></button></div><br><span ng-if=!column.$edit>{{column.title}}</span><div ng-if=column.$edit width=200><input class=form-control ng-model=column.title></div></th><th ng-if=\"!editCol && canEdit\" width=45><button class=\"btn btn-default btn-sm\" ng-if=!editCol ng-disabled=\"editRow || canEditItem\" ng-click=editNewColumn()><span class=\"glyphicon glyphicon-plus\"></span></button></th><th ng-if=\"editCol && canEdit\" class=selectEdit width=200><input placeholder=\"New Column Title\" class=form-control ng-model=columnBuffer.title></th><th ng-if=canEdit>Actions</th></tr></thead><tbody><tr ng-repeat=\"item in $data | filter:search:strict\" ng-class=\"{selectEdit: item.$edit && canEditItem}\"><td class=text-center ng-repeat=\"column in columns\" ng-class=\"{selectEdit: column.$edit && canEditItem}\"><span ng-if=\"!item.$edit && !column.$edit\">{{item[column.field]}}</span><div ng-if=item.$edit><input class=form-control type={{column.type}} placeholder={{item[column.field]}} ng-model=item[column.field]></div><div ng-if=column.$edit data-ng-switch on=column.type><div data-ng-switch-when=text><input class=form-control ng-model=item[column.field]></div><div data-ng-switch-when=number><input type=number class=form-control ng-model=item[column.field]></div></div></td><td ng-if=\"!editCol && canEdit\" width=45></td><td ng-if=\"editCol && canEdit\" width=200 class=selectEdit><div data-ng-switch on=columnBuffer.type><div data-ng-switch-when=text><input class=form-control ng-model=columnBuffer.data[$index]></div><div data-ng-switch-when=number><input type=number class=form-control ng-model=columnBuffer.data[$index]></div></div></td><td width=90 ng-if=canEdit class=text-center><div class=btn-group ng-if=!item.$edit><button id=selectRowEditID_{{$index}} class=\"btn btn-default btn-sm\" ng-disabled=\"editCol || editRow || canEditItem\" ng-click=selectRowEdit(item)><span class=\"glyphicon glyphicon-pencil\"></span></button> <button id=removeRowID_{{$index}} class=\"btn btn-danger btn-sm\" ng-disabled=\"editCol || editRow || canEditItem\" ng-click=removeRow(item)><span class=\"glyphicon glyphicon-trash\"></span></button></div><div class=btn-group ng-if=item.$edit><button id=toggleEditID_{{$index}} class=\"btn btn-primary btn-sm\" ng-click=toggleEdit(item)><span class=\"glyphicon glyphicon-ok\"></span></button> <button id=cancelRowEditID_{{$index}} class=\"btn btn-warning btn-sm\" ng-click=cancelRowEdit(item)><span class=\"glyphicon glyphicon-remove\"></span></button></div></td></tr></tbody><tfoot ng-if=canEdit><tr><td data-title=column.title ng-repeat=\"column in columns\" ng-class=\"{selectEdit: column.$edit && canEditItem}\"><input ng-if=editRow class=form-control ng-disabled=\"editCol || canEditItem\" placeholder=\"New {{column.field}}\" type={{column.type}} ng-model=rowBuffer[column.field]><div ng-if=column.$edit><button class=\"btn btn-primary btn-sm\" ng-click=toggleEdit(column)><span class=\"glyphicon glyphicon-ok\"></span></button> <button class=\"btn btn-warning btn-sm\" ng-click=cancelColEdit(column)><span class=\"glyphicon glyphicon-remove\"></span></button></div></td><td class=text-center ng-class=\"{'selectEdit': editCol}\"><div ng-if=editCol><input class=form-control placeholder=\"New field key\" ng-model=columnBuffer.field><select class=form-control ng-model=columnBuffer.type ng-change=\"columnBuffer.data = {}\"><option value=text>Textfield</option><option value=number>Number</option></select><br><button class=\"btn btn-primary btn-sm\" ng-disabled=!canAddCol ng-click=addColumn()><span class=\"glyphicon glyphicon-ok\"></span></button> <button class=\"btn btn-warning btn-sm\" ng-click=reset(true)><span class=\"glyphicon glyphicon-remove\"></span></button></div></td><td width=90 class=text-center><div class=btn-group><button ng-if=!editRow class=\"btn btn-primary btn-sm\" ng-disabled=\"editCol || canEditItem\" ng-click=editNewRow()><span class=\"glyphicon glyphicon-plus\"></span></button> <button ng-if=editRow class=\"btn btn-primary btn-sm\" ng-disabled=\"editCol || !canAddRow\" ng-click=addRow()><span class=\"glyphicon glyphicon-ok\"></span></button> <button ng-if=editRow class=\"btn btn-warning btn-sm\" ng-disabled=editCol ng-click=reset(true)><span class=\"glyphicon glyphicon-remove\"></span></button></div></td></tr></tfoot></table></div>");
 }]);
 ;'use strict';
 
@@ -37,6 +37,10 @@ angular.module("partials/ListEditor.html", []).run(["$templateCache", function($
             { title: 'Age of Person', field: 'age', type: 'number'}
         ];
     });
+
+    <body ng-controller="MainCtrl">
+        <list-editor title="Users" can-edit="true" list="list" columns="columns"></list-editor>
+    </body>
 */
 
 angular.module('nglist-editor', [
@@ -45,25 +49,68 @@ angular.module('nglist-editor', [
 	'ngTable'
 ])
 
-.directive('listEditor', function() {
+.directive('listEditor', function ($timeout) {
     return {
         restrict: 'E',
-        require: "^list",
         replace: true,
         scope: {
+            title: '@',
             canEdit: '@',
             list: '=',
             columns: '='
         },
         templateUrl: 'partials/ListEditor.html',
-        controller: 'ListController'
+        controller: 'ListController',
+        link: {
+            pre: function preLink(scope, element, attr) {
+                var unregister = scope.$watch('list', function (newval, oldval) {
+                    if (newval.length > 0) {
+                        scope.affixMissingColumns(scope.list, scope.columns);
+                        unregister();
+                    };
+                }, true);
+            },
+            post: function postLink(scope, element, attr) {
+                /**
+                 * Watchers for validating new col/row fields without forms
+                 */
+                scope.$watch('dataReady', function(newVal) {
+                    if (newVal && scope.list.length > 0) {
+                        scope.generateTable(scope.list);
+                    }
+                });
+
+                scope.$watchCollection('search', function(newVal) {                    
+                    if (scope.tableParams && scope.dataReady && newVal) {
+                        scope.tableParams.reload();
+                    }
+                });
+
+                scope.$watchCollection('itemBuffer', function(newVal) {
+                    scope.canEditItem = _.values(newVal).length !== 0;
+                });
+
+                scope.$watchCollection('rowBuffer', function(newVal) {
+                    // allow row to be added if all fields are non-empty
+                    scope.canAddRow = _.compact(_.values(newVal)).length == scope.columns.length;
+                });
+
+                scope.$watchCollection('columnBuffer', function(newVal) {
+                    // allow column to be added if new column title, field,
+                    // type are non-empty and data object exists in columnBuffer
+                    var filledCols = _.compact(_.values(newVal)).length == 4;
+                    var isUniqueCol = _.indexOf(_.pluck(scope.columns, 'field'), newVal.field) < 0;
+                    scope.canAddCol = filledCols && isUniqueCol;
+                });
+            }
+        }
     };
 })
 
-.controller('ListController', function ($scope, $filter, ngTableParams) {
-    var data = angular.copy($scope.list);
-    var columns = angular.copy($scope.columns);
+.controller('ListController', function ($scope, $filter, $timeout, ngTableParams) {
 
+    // public variable for title of the list table
+    $scope.title = $scope.title || 'Items';
     // public variable for determining if table is editable
     $scope.canEdit = $scope.canEdit || false;
 
@@ -81,12 +128,14 @@ angular.module('nglist-editor', [
     $scope.columnBuffer = {}; // for new rows
     $scope.itemBuffer = {};   // for existing rows/cols
 
+    $scope.dataReady = false;
+
     /** 
      * Given possibly mismatched input lists with varying columns,
      * flatten and union mismatched keys (duplicate columns are merged)
      * and return proper evenly column-matched data
      */
-    var affixMissingColumns = function(listInput, colInput) {
+    $scope.affixMissingColumns = function(listInput, colInput) {
         var missingCols = [];
         // determine duplicate-free column names from list
         _.chain(_.union(_.flatten(_.map(listInput, _.keys))))
@@ -115,12 +164,9 @@ angular.module('nglist-editor', [
             });
             return item;
         });
-    };
 
-    // Fix possibly mismatched data
-    affixMissingColumns(data, columns);
-    angular.copy(data, $scope.list);
-    angular.copy(columns, $scope.columns);
+        $scope.dataReady = true;
+    };
 
     /**
      * Row Editing Functions
@@ -139,8 +185,9 @@ angular.module('nglist-editor', [
         $scope.toggleEdit(item);
     };
 
-    $scope.removeRow = function(index) {
-        $scope.list.splice(index, 1);
+    $scope.removeRow = function(item) {
+        var idx = $scope.list.indexOf(item);
+        $scope.list.splice(idx, 1);
         $scope.tableParams.reload();
     };
 
@@ -220,26 +267,6 @@ angular.module('nglist-editor', [
     };
 
     /**
-     * Watchers for validating new col/row fields without forms
-     */
-    $scope.$watchCollection('itemBuffer', function(newVal) {
-        $scope.canEditItem = _.values(newVal).length !== 0;
-    });
-
-    $scope.$watchCollection('rowBuffer', function(newVal) {
-        // allow row to be added if all fields are non-empty
-        $scope.canAddRow = _.compact(_.values(newVal)).length == $scope.columns.length;
-    });
-
-    $scope.$watchCollection('columnBuffer', function(newVal) {
-        // allow column to be added if new column title, field,
-        // type are non-empty and data object exists in columnBuffer
-        var filledCols = _.compact(_.values(newVal)).length == 4;
-        var isUniqueCol = _.indexOf(_.pluck($scope.columns, 'field'), newVal.field) < 0;
-        $scope.canAddCol = filledCols && isUniqueCol;
-    });
-
-    /**
      * Function for toggling existing row or column edits
      */
     $scope.toggleEdit = function(item) {
@@ -263,32 +290,43 @@ angular.module('nglist-editor', [
         }
     };
 
-    $scope.tableParams = new ngTableParams({
-        page: 1,              // show first page
-        count: 10,           // count per page
-    }, {
-        total: $scope.list.length,
-        getData: function($defer, params) {
+    $scope.generateTable = function(list) {
+
+        var getFOData = function(data, params) {
+            var filteredData = $scope.search ?
+                $filter('filter')(data, $scope.search) :
+                data;
             var orderedData = params.sorting() ?
-                $filter('orderBy')($scope.list, params.orderBy()) :
-                $scope.list;
-
-            params.total($scope.list.length); // set total for recalc pagination
-            $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-        },
-        $scope: { $data: {} }
-    });
-
-    $scope.isSortBy = function(column, order) {
-        return $scope.tableParams.isSortBy(column, order);
-    };
-
-    $scope.sortTable = function(column) {
-        var sortParam = {};
-        if (!column.$edit) {
-            sortParam[column.field] = $scope.tableParams.isSortBy(column.field, 'asc') ? 'desc' : 'asc';
-            $scope.tableParams.sorting(sortParam);          
+                $filter('orderBy')(filteredData, params.orderBy()) :
+                data;
+            return orderedData;
         }
-    };
+
+        $scope.tableParams = new ngTableParams({
+            page: 1,              // show first page
+            count: 10             // count per page
+        }, {
+            total: list.length,
+            getData: function($defer, params) {
+                var FOData = getFOData(list, params);
+                params.total(FOData.length); // set total for recalc pagination
+                $defer.resolve(FOData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+            },
+            $scope: { $data: {} }
+        });
+
+        $scope.isSortBy = function(column, order) {
+            return $scope.tableParams.isSortBy(column, order);
+        };
+
+        $scope.sortTable = function(column) {
+            var sortParam = {};
+            if (!column.$edit) {
+                sortParam[column.field] = $scope.tableParams.isSortBy(column.field, 'asc') ? 'desc' : 'asc';
+                $scope.tableParams.sorting(sortParam);          
+            }
+        };
+    }
+
 });
 

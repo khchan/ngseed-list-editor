@@ -1,21 +1,21 @@
 <div class="row">
 	<style>.selectEdit {background-color: #f5f5f5;width: 200px;}</style>
 	<br/>
-	<div class="jumbotron">
+
+	<div class="well well-lg">
+	<!-- Default panel contents -->
 		<h1>{{title}}</h1>
-		<blockquote>
-			<p><strong>Sorting:</strong> {{tableParams.sorting()|json}}
-			<p><strong>Filter:</strong> {{tableParams.filter()|json}}
-		</blockquote>
 		<form class="navbar-form navbar-right" role="search">
 			<div class="form-group">
-				<input type="text" placeholder="Search" class="form-control" ng-model="search.$">
-			</div>
+				<input type="text" placeholder="Search" class="form-control" ng-model="search.$"/>
+			</div>			
 			<button ng-click="tableParams.sorting({})" class="btn btn-default">Clear sorting</button>
 		</form>
-	</div>	
-
-	<table ng-table="tableParams" show-filter="true" class="table ng-table-rowselected">
+		<blockquote>
+			<p><strong>Total:</strong> <span class="label label-info">{{list.length}}</span></p>
+		</blockquote>
+	</div>
+	<table ng-table="tableParams" class="table ng-table-rowselected">
 		<thead>
 			<tr>
 				<!-- Header Columns for Data -->
@@ -40,7 +40,7 @@
 					</div>
 				</th>
 				<!-- Edit Column Header -->
-				<th ng-if="!editCol && canEdit"width="45">
+				<th ng-if="!editCol && canEdit" width="45">
 					<button class="btn btn-default btn-sm" ng-if="!editCol" ng-disabled="editRow || canEditItem" ng-click="editNewColumn()">
 					  <span class="glyphicon glyphicon-plus"></span>
 				  </button>

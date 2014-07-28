@@ -29,6 +29,10 @@
             { title: 'Age of Person', field: 'age', type: 'number'}
         ];
     });
+
+    <body ng-controller="MainCtrl">
+        <list-editor title="Users" can-edit="true" list="list" columns="columns"></list-editor>
+    </body>
 */
 
 angular.module('nglist-editor', [
@@ -37,7 +41,7 @@ angular.module('nglist-editor', [
 	'ngTable'
 ])
 
-.directive('listEditor', function ($interval) {
+.directive('listEditor', function ($timeout) {
     return {
         restrict: 'E',
         replace: true,
@@ -50,25 +54,29 @@ angular.module('nglist-editor', [
         templateUrl: 'partials/ListEditor.html',
         controller: 'ListController',
         link: {
-            pre: function preLink(scope, element, attrs) {
+            pre: function preLink(scope, element, attr) {
                 var unregister = scope.$watch('list', function (newval, oldval) {
                     if (newval.length > 0) {
                         scope.affixMissingColumns(scope.list, scope.columns);
-                        scope.tableParams.reload();
                         unregister();
                     };
                 }, true);
             },
-            post: function postLink(scope, element, attr) {                
+            post: function postLink(scope, element, attr) {
                 /**
                  * Watchers for validating new col/row fields without forms
                  */
-                scope.$watchCollection('search', function(newVal, oldVal) {
-                    if (newVal) {
-                        console.log('Search');
+                scope.$watch('dataReady', function(newVal) {
+                    if (newVal && scope.list.length > 0) {
+                        scope.generateTable(scope.list);
+                    }
+                });
+
+                scope.$watchCollection('search', function(newVal) {                    
+                    if (scope.tableParams && scope.dataReady && newVal) {
                         scope.tableParams.reload();
                     }
-                });  
+                });
 
                 scope.$watchCollection('itemBuffer', function(newVal) {
                     scope.canEditItem = _.values(newVal).length !== 0;
@@ -92,8 +100,6 @@ angular.module('nglist-editor', [
 })
 
 .controller('ListController', function ($scope, $filter, $timeout, ngTableParams) {
-    var data = angular.copy($scope.list);
-    var columns = angular.copy($scope.columns);
 
     // public variable for title of the list table
     $scope.title = $scope.title || 'Items';
@@ -113,6 +119,8 @@ angular.module('nglist-editor', [
     $scope.rowBuffer = {};    // for new rows
     $scope.columnBuffer = {}; // for new rows
     $scope.itemBuffer = {};   // for existing rows/cols
+
+    $scope.dataReady = false;
 
     /** 
      * Given possibly mismatched input lists with varying columns,
@@ -148,12 +156,9 @@ angular.module('nglist-editor', [
             });
             return item;
         });
-    };
 
-    // Fix possibly mismatched data
-    $scope.affixMissingColumns(data, columns);
-    angular.copy(data, $scope.list);
-    angular.copy(columns, $scope.columns);
+        $scope.dataReady = true;
+    };
 
     /**
      * Row Editing Functions
@@ -277,36 +282,43 @@ angular.module('nglist-editor', [
         }
     };
 
-    $scope.tableParams = new ngTableParams({
-        page: 1,              // show first page
-        count: 10,           // count per page
-    }, {
-        total: $scope.list.length,
-        getData: function($defer, params) {
-            // use build-in angular filter
-            var filteredData = params.filter() ?
-                    $filter('filter')($scope.list, params.filter()) :
-                    $scope.list;
+    $scope.generateTable = function(list) {
+
+        var getFOData = function(data, params) {
+            var filteredData = $scope.search ?
+                $filter('filter')(data, $scope.search) :
+                data;
             var orderedData = params.sorting() ?
-                    $filter('orderBy')(filteredData, params.orderBy()) :
-                    $scope.list;
-
-            params.total(orderedData.length); // set total for recalc pagination
-            $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-        },
-        $scope: { $data: {} }
-    });
-
-    $scope.isSortBy = function(column, order) {
-        return $scope.tableParams.isSortBy(column, order);
-    };
-
-    $scope.sortTable = function(column) {
-        var sortParam = {};
-        if (!column.$edit) {
-            sortParam[column.field] = $scope.tableParams.isSortBy(column.field, 'asc') ? 'desc' : 'asc';
-            $scope.tableParams.sorting(sortParam);          
+                $filter('orderBy')(filteredData, params.orderBy()) :
+                data;
+            return orderedData;
         }
-    };
+
+        $scope.tableParams = new ngTableParams({
+            page: 1,              // show first page
+            count: 10             // count per page
+        }, {
+            total: list.length,
+            getData: function($defer, params) {
+                var FOData = getFOData(list, params);
+                params.total(FOData.length); // set total for recalc pagination
+                $defer.resolve(FOData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+            },
+            $scope: { $data: {} }
+        });
+
+        $scope.isSortBy = function(column, order) {
+            return $scope.tableParams.isSortBy(column, order);
+        };
+
+        $scope.sortTable = function(column) {
+            var sortParam = {};
+            if (!column.$edit) {
+                sortParam[column.field] = $scope.tableParams.isSortBy(column.field, 'asc') ? 'desc' : 'asc';
+                $scope.tableParams.sorting(sortParam);          
+            }
+        };
+    }
+
 });
 

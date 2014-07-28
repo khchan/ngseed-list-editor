@@ -20,13 +20,13 @@ describe('List Editor Directives', function() {
 			{name: "Jacob", age: 27},
 			{name: "Nephi", age: 29, complexion: "fair"}
 		];
-		
+
 		$scope.columns = [
 			{ title: 'Name of Person', field: 'name', type: 'text'},
 			{ title: 'Age of Person', field: 'age', type: 'number'}
 		];
 
-		var html = angular.element('<list-editor can-edit="true" list="list" columns="columns"></list-editor>');
+		var html = angular.element('<list-editor title="Users" can-edit="true" list="list" columns="columns"></list-editor>');
 		element = $compile(html)($scope);
 		$scope.$apply();
 
@@ -85,7 +85,7 @@ describe('List Editor Directives', function() {
 				{name: 'test', age:123, weight:123, complexion:'test'}
 			]; 
 		});
-		
+
 		// Cancelling data edits
 		it('should edit row and cancel data', function() {
 			_.each(isoScope.list, function(row) {
@@ -198,7 +198,7 @@ describe('List Editor Directives', function() {
 		});
 
 		it('should delete all data in the row', function() {
-			isoScope.removeRow(0);
+			isoScope.removeRow(isoScope.list[0]);
 			expect(angular.copy(isoScope.list)).toEqual(delRow);
 		});
 

@@ -219,11 +219,13 @@ angular.module('nglist-editor', [
     };
 
     $scope.removeColumn = function(index) {
-        _.each($scope.list, function(row) {
-            angular.copy(_.omit(row, $scope.columns[index].field), row);
-        });
-        $scope.columns.splice(index, 1);
-        $scope.tableParams.reload();
+        if (confirm('Are you sure you want to delete column: ' + $scope.columns[index].field + '?')) {
+            _.each($scope.list, function(row) {
+                angular.copy(_.omit(row, $scope.columns[index].field), row);
+            });
+            $scope.columns.splice(index, 1);
+            $scope.tableParams.reload();
+        }        
     };
 
     $scope.editNewColumn = function() {

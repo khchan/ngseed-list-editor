@@ -203,6 +203,7 @@ describe('List Editor Directives', function() {
 		});
 
 		it('should delete all data in the col and associated rows', function() {
+			spyOn(window, 'confirm').andReturn(true);
 			isoScope.removeColumn(0);
 			expect(angular.copy(isoScope.list)).toEqual(delCol);
 		});

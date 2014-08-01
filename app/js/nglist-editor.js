@@ -67,7 +67,7 @@ angular.module('nglist-editor', [
                  * Watchers for validating new col/row fields without forms
                  */
                 scope.$watch('dataReady', function(newVal) {
-                    if (newVal && scope.list.length > 0) {
+                    if (newVal && scope.list.length >= 0) {
                         scope.generateTable(scope.list);
                     }
                 });

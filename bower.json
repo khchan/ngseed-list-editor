@@ -20,8 +20,8 @@
     "bootstrap-css": "~3.2.0"
   },
   "ignore": [
-    "./app",
-    "./node_modules",
-    "./test"
+    "app",
+    "node_modules",
+    "test"
   ]
 }

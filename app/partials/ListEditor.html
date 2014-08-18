@@ -2,10 +2,10 @@
 	<style>
 		.selectEdit {background-color: #f5f5f5;width: 200px;}
 	</style>
+	
 	<br/>
-	<div class="well well-lg">
-	<!-- Default panel contents -->
-		<h1>{{title}}</h1>
+
+	<div class="well well-sm">
 		<form class="navbar-form navbar-right" role="search">
 			<button type="button" class="btn btn-primary btn-sm" ng-click="canEdit = !canEdit">Toggle Edit</button>
 			<div class="form-group">
@@ -15,9 +15,9 @@
 		</form>
 		<blockquote>
 			<p>Sorted by: {{tableParams.sorting()}}</p>
-			<p><strong>Total:</strong> <span class="label label-info">{{list.length}}</span></p>
 		</blockquote>
 	</div>
+
 	<div class="table-responsive">
 		<table ng-table="tableParams" class="table table-hover table-bordered">
 			<thead>

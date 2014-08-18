@@ -31,7 +31,7 @@
     });
 
     <body ng-controller="MainCtrl">
-        <list-editor title="Users" can-edit="true" list="list" columns="columns"></list-editor>
+        <list-editor can-edit="true" list="list" columns="columns"></list-editor>
     </body>
 */
 
@@ -46,7 +46,6 @@ angular.module('nglist-editor', [
         restrict: 'E',
         replace: true,
         scope: {
-            title: '@',
             canEdit: '@',
             list: '=',
             columns: '='
@@ -71,6 +70,15 @@ angular.module('nglist-editor', [
                         scope.generateTable(scope.list);
                     }
                 });
+
+                // wait for table to be generated before adding watcher
+                $timeout(function() {
+                    scope.$watchCollection('list', function(newVal) {
+                        if (scope.tableParams && scope.dataReady && newVal) {
+                            scope.tableParams.reload();
+                        }
+                    });
+                }, 2000);                
 
                 scope.$watchCollection('search', function(newVal) {                    
                     if (scope.tableParams && scope.dataReady && newVal) {
@@ -101,8 +109,6 @@ angular.module('nglist-editor', [
 
 .controller('ListController', function ($scope, $filter, $timeout, ngTableParams) {
 
-    // public variable for title of the list table
-    $scope.title = $scope.title || 'Items';
     // public variable for determining if table is editable
     $scope.canEdit = $scope.canEdit || false;
 
@@ -322,7 +328,6 @@ angular.module('nglist-editor', [
                 $scope.tableParams.sorting(sortParam);          
             }
         };
-    }
-
+    };
 });
 

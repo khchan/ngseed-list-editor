@@ -327,6 +327,7 @@ angular.module("partials/ListEditor.html", []).run(["$templateCache", function($
 				page: 1,              // show first page
 				count: 10             // count per page
 			}, {
+				counts: [],
 				total: list.length,
 				getData: function($defer, params) {
 					var FOData = getFOData(list, params);

@@ -69,7 +69,7 @@ angular.module("partials/ListEditor.html", []).run(["$templateCache", function($
 			link: {
 				pre: function preLink(scope, element, attr) {
 					var unregister = scope.$watch('list', function (newval, oldval) {
-						if (newVal && newval.length > 0) {
+						if (newval.length > 0) {
 							scope.affixMissingColumns(scope.list, scope.columns);
 							unregister();
 						};
@@ -105,10 +105,8 @@ angular.module("partials/ListEditor.html", []).run(["$templateCache", function($
 					});
 
 					scope.$watchCollection('rowBuffer', function(newVal) {
-						if (newVal) {
-							// allow row to be added if all fields are non-empty
-							scope.canAddRow = _.compact(_.values(newVal)).length == scope.columns.length;	
-						}						
+						// allow row to be added if all fields are non-empty
+						scope.canAddRow = _.compact(_.values(newVal)).length == scope.columns.length;
 					});
 
 					scope.$watchCollection('columnBuffer', function(newVal) {

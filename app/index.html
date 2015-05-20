@@ -46,7 +46,16 @@
 
   <body ng-controller="MainCtrl">
     <div class="container">
-      <list-editor can-edit="true" list="list" columns="columns"></list-editor>
+      <list-editor 
+        can-edit="true" 
+        can-add-newcol="false"
+        can-add-newrow="true"
+        can-edit-header="false"
+        can-del-row="true"
+        can-del-col="false"
+        list="list" 
+        columns="columns">
+      </list-editor>
     </div>
   </body>
 </html>

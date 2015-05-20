@@ -61,7 +61,7 @@
 			link: {
 				pre: function preLink(scope, element, attr) {
 					var unregister = scope.$watch('list', function (newval, oldval) {
-						if (!_.isUndefined(newVal) && newval.length > 0) {
+						if (newVal && newval.length > 0) {
 							scope.affixMissingColumns(scope.list, scope.columns);
 							unregister();
 						};
@@ -97,12 +97,9 @@
 					});
 
 					scope.$watchCollection('rowBuffer', function(newVal) {
-						if (!_.isUndefined(newVal)) {
+						if (newVal) {
 							// allow row to be added if all fields are non-empty
-							var valueCompact = _.compact(_.values(newVal));
-							if (!_.isUndefined(valueCompact)) {
-								scope.canAddRow = valueCompact.length == scope.columns.length;		
-							}							
+							scope.canAddRow = _.compact(_.values(newVal)).length == scope.columns.length;	
 						}						
 					});
 
